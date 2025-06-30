@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=bitrix
+      - POSTGRES_PASSWORD=bitrix
+      - POSTGRES_DB=bitrix
+    ports:
+      - 5432:5432

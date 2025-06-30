@@ -1,0 +1,18 @@
+pytest_plugins = (
+    "tests.plugins.instances.db",
+    "tests.plugins.instances.args",
+    "tests.plugins.instances.repositories.bitrix",
+    "tests.plugins.factories.tables.bitrix_sng",
+    "tests.plugins.factories.tables.bitrix_world",
+    "tests.plugins.factories.tables.bitrix_mass_selection",
+    "tests.plugins.factories.tables.ad_call_center",
+    "tests.plugins.factories.tables.ad_mass_recruitment",
+    "tests.plugins.factories.tables.ad_sng",
+    "tests.plugins.factories.tables.ad_world",
+    "tests.plugins.factories.entities.bitrix_sng",
+    "tests.plugins.factories.entities.bitrix_world",
+    "tests.plugins.factories.entities.ad_call_center",
+    "tests.plugins.factories.entities.ad_mass_recruitment",
+    "tests.plugins.factories.entities.ad_sng",
+    "tests.plugins.factories.entities.ad_world",
+)

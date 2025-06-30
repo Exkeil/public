@@ -1,0 +1,68 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+
+  airflow-init:
+    image: apache/airflow:2.8.1-python3.10
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=your_fernet_key
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        airflow db upgrade
+        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+    volumes:
+      - ./API_B:/opt/airflow/API_B
+      - ./API_B/airflow_dag.py:/opt/airflow/dags/airflow_dag.py
+      - ./API_B/requirements.txt:/opt/airflow/requirements.txt
+
+  airflow-webserver:
+    image: apache/airflow:2.8.1-python3.10
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=your_fernet_key
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    ports:
+      - "8080:8080"
+    command: webserver
+    volumes:
+      - ./API_B:/opt/airflow/API_B
+      - ./API_B/airflow_dag.py:/opt/airflow/dags/airflow_dag.py
+      - ./API_B/requirements.txt:/opt/airflow/requirements.txt
+
+  airflow-scheduler:
+    image: apache/airflow:2.8.1-python3.10
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=your_fernet_key
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    command: scheduler
+    volumes:
+      - ./API_B:/opt/airflow/API_B
+      - ./API_B/airflow_dag.py:/opt/airflow/dags/airflow_dag.py
+      - ./API_B/requirements.txt:/opt/airflow/requirements.txt
+
+volumes:
+  postgres-db-volume: 
